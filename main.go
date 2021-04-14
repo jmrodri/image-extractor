@@ -66,11 +66,17 @@ func ExtractImage(ctx context.Context, logger *log.Entry, image string) (string,
 }
 
 func main() {
+
+	if len(os.Args[1:]) < 1 {
+		fmt.Println("image-extractor <imagespec>")
+		os.Exit(-1)
+	}
+
 	logger := log.New()
 	logger.SetOutput(os.Stdout)
 	log.NewEntry(logger)
 
-	image := "gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0"
+	image := os.Args[1]
 	outputDir, err := ExtractImage(context.Background(), nil, image)
 	if err != nil {
 		fmt.Printf("Error loading image: %v\n", err)
