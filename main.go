@@ -18,6 +18,12 @@ func DiscardLogger() *log.Entry {
 	return log.NewEntry(logger)
 }
 
+func StdoutLogger() *log.Entry {
+	logger := log.New()
+	logger.SetOutput(os.Stdout)
+	return log.NewEntry(logger)
+}
+
 func ExtractImage(ctx context.Context, logger *log.Entry, image string) (string, error) {
 	if logger == nil {
 		logger = DiscardLogger()
@@ -72,12 +78,8 @@ func main() {
 		os.Exit(-1)
 	}
 
-	logger := log.New()
-	logger.SetOutput(os.Stdout)
-	log.NewEntry(logger)
-
 	image := os.Args[1]
-	outputDir, err := ExtractImage(context.Background(), nil, image)
+	outputDir, err := ExtractImage(context.Background(), StdoutLogger(), image)
 	if err != nil {
 		fmt.Printf("Error loading image: %v\n", err)
 		os.Exit(-1)
