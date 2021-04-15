@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	registryimage "github.com/operator-framework/operator-registry/pkg/image"
 	"github.com/operator-framework/operator-registry/pkg/image/containerdregistry"
@@ -24,6 +25,17 @@ func StdoutLogger() *log.Entry {
 	return log.NewEntry(logger)
 }
 
+func ConvertToDirName(s string) string {
+	str := strings.ReplaceAll(s, "/", "-")
+	str = strings.ReplaceAll(str, ":", "-")
+	str = strings.ReplaceAll(str, ".", "-")
+	if str == "" {
+		return "image-"
+	}
+
+	return str
+}
+
 func ExtractImage(ctx context.Context, logger *log.Entry, image string) (string, error) {
 	if logger == nil {
 		logger = DiscardLogger()
@@ -34,7 +46,7 @@ func ExtractImage(ctx context.Context, logger *log.Entry, image string) (string,
 	if err != nil {
 		return "", err
 	}
-	imageDir, err := ioutil.TempDir(wd, "image-")
+	imageDir, err := ioutil.TempDir(wd, ConvertToDirName(image))
 	if err != nil {
 		return "", err
 	}
